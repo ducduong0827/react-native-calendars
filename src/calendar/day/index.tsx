@@ -11,14 +11,20 @@ import {DateData} from '../../types';
 import BasicDay, {BasicDayProps} from './basic';
 import PeriodDay from './period';
 
-function areEqual(prevProps: DayProps, nextProps: DayProps) {
-  const prevPropsWithoutMarkDates = omit(prevProps, 'marking');
-  const nextPropsWithoutMarkDates = omit(nextProps, 'marking');
-  const didPropsChange = some(prevPropsWithoutMarkDates, function (value, key) {
-    return value !== nextPropsWithoutMarkDates[key];
-  });
-  const isMarkingEqual = isEqual(prevProps.marking, nextProps.marking);
-  return !didPropsChange && isMarkingEqual;
+function areEqual(prevProps, nextProps) {
+    const prevPropsWithoutMarkDates = omit(prevProps, 'marking');
+    const nextPropsWithoutMarkDates = omit(nextProps, 'marking');
+    const didPropsChange = some(prevPropsWithoutMarkDates, function (value, key) {
+        if (typeof nextPropsWithoutMarkDates[key] === 'function') {
+            return false;
+        }
+        if (typeof nextPropsWithoutMarkDates[key] === 'object') {
+            return false;
+        }
+        return value !== nextPropsWithoutMarkDates[key];
+    });
+    const isMarkingEqual = isEqual(prevProps.marking, nextProps.marking);
+    return !didPropsChange && isMarkingEqual;
 }
 
 export interface DayProps extends BasicDayProps {
